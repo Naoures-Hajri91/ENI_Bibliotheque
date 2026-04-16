@@ -17,12 +17,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import fr.eni.gestionBib.dal.UserRepository;
+
 @Configuration
 public class JwtAppConfig {
 	@Autowired
-	private final UserInfoRepository uRepository;
+	private final UserRepository uRepository;
 	
-	public JwtAppConfig(UserInfoRepository uRepository ){
+	public JwtAppConfig(UserRepository uRepository ){
 		this.uRepository = uRepository;
 	}
 	/*
@@ -30,7 +32,8 @@ public class JwtAppConfig {
 	*/
 	@Bean
 	UserDetailsService userDetailsService () {
-	   return username -> uRepository.findById(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+	   return username -> uRepository.findByEmail(username)
+		        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 	}
 	/**
 	* Fournisseur d'authentification personnalisé

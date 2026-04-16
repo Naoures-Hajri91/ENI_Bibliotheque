@@ -5,8 +5,8 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = "pseudo")
+@EqualsAndHashCode(of = "email")
 public class AuthenticationRequest {
-	private String pseudo; 
+	private String email; 
 	private String password; 
 }

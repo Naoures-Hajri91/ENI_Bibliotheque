@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.eni.gestionBib.bo.Role;
 import fr.eni.gestionBib.bo.UserInfo;
+import fr.eni.gestionBib.dal.RoleRepository;
 import fr.eni.gestionBib.dal.UserRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -23,26 +26,52 @@ public class AuthenticationController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private RoleRepository roleRepository;
+	
 	public AuthenticationController(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService; 
 	}
 	
-	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody AuthenticationRequest request) {
+	 @PostMapping("/register")
+	    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
 
-	    UserInfo user = new UserInfo();
-	    user.setPseudo(request.getPseudo());
-	    user.setPassword(passwordEncoder.encode(request.getPassword())); 
-	    user.setAuthority("USER");
+	        // 🔴 vérifier email unique
+	        if (userRepository.existsByEmail(request.getEmail())) {
+	            return ResponseEntity.badRequest().body("Email already used");
+	        }
 
-	    userRepository.save(user);
+	        //  récupérer rôle par défaut
+	        Role role = roleRepository.findByName("ADHERENT")
+	                .orElseThrow(() -> new RuntimeException("Role not found"));
 
-	    return ResponseEntity.ok("User created");
-	}
-	@PostMapping("/login")
-	public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
-		return ResponseEntity.ok(authenticationService.authenticate(request));
-		}
+	        //  créer user
+	        UserInfo user = new UserInfo();
+	        user.setNom(request.getNom());
+	        user.setPrenom(request.getPrenom());
+	        user.setEmail(request.getEmail());
+	       
+	        //  BCrypt
+	        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+	        //  role
+	        user.setRole(role);
+
+	        userRepository.save(user);
+
+	        return ResponseEntity.ok("User registered successfully");
+	    }
+
+	    // ================= LOGIN =================
+
+	    @PostMapping("/login")
+	    public ResponseEntity<AuthenticationResponse> login(
+	            @RequestBody AuthenticationRequest request
+	    ) {
+	        return ResponseEntity.ok(
+	                authenticationService.authenticate(request)
+	        );
+	    }
 	
 	
   
