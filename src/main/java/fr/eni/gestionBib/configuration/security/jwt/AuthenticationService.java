@@ -14,50 +14,50 @@ import lombok.AllArgsConstructor;
 @Service
 public class AuthenticationService {
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
+	private final UserRepository userRepository;
+	private final RoleRepository roleRepository;
+	private final AuthenticationManager authenticationManager;
+	private final JwtService jwtService;
+	private final PasswordEncoder passwordEncoder;
 
-    // ================= LOGIN =================
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+	// ================= LOGIN =================
+	public AuthenticationResponse authenticate(AuthenticationRequest request) {
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+		authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        UserInfo user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+		UserInfo user = userRepository	.findByEmail(request.getEmail())
+										.orElseThrow(() -> new RuntimeException("User not found"));
 
-        String jwtToken = jwtService.generateToken(user);
+		String jwtToken = jwtService.generateToken(user);
 
-        AuthenticationResponse response = new AuthenticationResponse();
-        response.setToken(jwtToken);
+		AuthenticationResponse response = new AuthenticationResponse();
+		response.setToken(jwtToken);
 
-        return response;
-    }
+		return response;
+	}
 
-    // ================= REGISTER =================
-    public UserInfo register(RegisterRequest request) {
+	// ================= REGISTER =================
+	public UserInfo register(RegisterRequest request) {
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already used");
-        }
+		if (userRepository.existsByEmail(request.getEmail())) {
+			throw new RuntimeException("Email already used");
+		}
 
-        Role role = roleRepository.findByName("ADHERENT")
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+		Role role = roleRepository.findByName("ADHERENT").orElseThrow(() -> new RuntimeException("Role not found"));
 
-        UserInfo user = new UserInfo();
-        user.setNom(request.getNom());
-        user.setPrenom(request.getPrenom());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(role);
+		UserInfo user = new UserInfo();
+		user.setNom(request.getNom());
+		user.setPrenom(request.getPrenom());
+		user.setEmail(request.getEmail());
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
+		user.setRole(role);
 
-        return userRepository.save(user);
-    }
+		return userRepository.save(user);
+	}
+
+	//
+	public UserInfo getUserByEmail(String email) {
+		return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+	}
 }

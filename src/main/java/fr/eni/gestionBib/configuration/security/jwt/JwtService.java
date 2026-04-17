@@ -6,10 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import fr.eni.gestionBib.bo.UserInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -18,9 +21,16 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
+
+    private final UserDetailsService userDetailsService;
+	
 	// Déclarer une clef de sécurité, en utilisant
 	@Value("${app.jwt.secret}")
 	private String SECRET_KEY;
+
+    JwtService(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 	
 	//Signature transmise pour la création du jeton. 
 	//Et chiffrer/déchiffrer les données du jeton
