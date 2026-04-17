@@ -1,0 +1,71 @@
+package fr.eni.gestionBib.bo;
+import jakarta.persistence.*;
+import lombok.*;
+
+
+import jakarta.validation.constraints.*;
+
+
+import java.io.Serializable;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Builder
+public class Book implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @NotBlank
+    @Size(min = 2, max = 255)
+    @Column(nullable = false, length = 255)
+    private String title;
+
+    @NotBlank
+    @Size(min = 2, max = 255)
+    @Column(nullable = false, length = 255)
+    private String author;
+
+    @NotBlank
+    @Size(min = 10, max = 20)
+    @Column(nullable = false, unique = true, length = 20)
+    private String isbn;
+
+    @Size(max = 2000)
+    @Column(length = 2000)
+    private String description;
+
+    @Size(max = 100)
+    private String category;
+
+    private String coverUrl;
+
+    @NotNull
+    @Min(0)
+    @Column(nullable = false)
+    private Integer totalCopies;
+
+    @NotNull
+    @Min(0)
+    @Column(nullable = false)
+    private Integer availableCopies;
+
+    @Min(0)
+    @Max(5)
+    private float avgRating;
+
+
+   /* @PastOrPresent
+    private LocalDateTime addedAt;
+
+    @OneToMany(mappedBy = "book")
+    private List<Loan> loans;
+
+    @OneToMany(mappedBy = "book")
+    private List<Reservation> reservations;*/
+}
