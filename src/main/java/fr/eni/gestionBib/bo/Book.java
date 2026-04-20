@@ -19,7 +19,7 @@ public class Book implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotBlank
     @Size(min = 2, max = 255)
@@ -58,6 +58,8 @@ public class Book implements Serializable {
     @Min(0)
     @Max(5)
     private float avgRating;
+    
+   private Boolean available;
 
 
    /* @PastOrPresent
