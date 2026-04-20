@@ -1,12 +1,20 @@
 package fr.eni.gestionBib.controller;
 
+import java.io.IOException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import fr.eni.gestionBib.bll.BookService;
 import fr.eni.gestionBib.bo.Book;
+
+import fr.eni.gestionBib.web.dto.BookRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/books")
@@ -14,9 +22,11 @@ import fr.eni.gestionBib.bo.Book;
 public class BookController {
 
     private final BookService service;
+	
 
     public BookController(BookService service) {
         this.service = service;
+      
     }
 
     // ✅ GET ALL + PAGINATION 
@@ -53,5 +63,16 @@ public class BookController {
     }
     
     
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    public Book create(
+            @Valid @RequestPart("book") BookRequest req,
+            @RequestPart("file") MultipartFile file
+    ) throws IOException {
+
+      
+    	
+        return service.create(req,file);
+    }
     
 }

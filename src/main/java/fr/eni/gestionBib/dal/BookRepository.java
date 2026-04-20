@@ -1,5 +1,7 @@
 package fr.eni.gestionBib.dal;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,10 +23,10 @@ import fr.eni.gestionBib.bo.Book;
 	     Page<Book> findByCategory(String category, Pageable pageable);
 
 	     // 📦 disponibilité
-	     Page<Book> findByAvailable(boolean available, Pageable pageable);
+	     //  Page<Book> findByAvailable(boolean available, Pageable pageable);
 
 	     // 🔥 combinaison simple (catégorie + disponibilité)
-	     Page<Book> findByCategoryAndAvailable(String category, boolean available, Pageable pageable);
+	     //  Page<Book> findByCategoryAndAvailable(String category, boolean available, Pageable pageable);
 
 	     // 🔥 recherche globale (titre OU auteur OU isbn)
 	     Page<Book> findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrIsbnContainingIgnoreCase(
@@ -33,6 +35,8 @@ import fr.eni.gestionBib.bo.Book;
 	             String isbn,
 	             Pageable pageable
 	     );
+
+		Optional<Book> findByIsbn(String isbn);
 	 }
 	 
 

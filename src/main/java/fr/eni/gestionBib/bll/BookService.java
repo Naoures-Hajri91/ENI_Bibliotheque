@@ -1,21 +1,104 @@
 package fr.eni.gestionBib.bll;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.eni.gestionBib.bo.Book;
 import fr.eni.gestionBib.dal.BookRepository;
+
+import fr.eni.gestionBib.web.dto.BookRequest;
 
 @Service
 public class BookService {
 
     private final BookRepository repository;
+    // private final  BookMapper bookMapper;
+    
+    private final ObjectMapper objectMapper;
 
     public BookService(BookRepository repository) {
         this.repository = repository;
+		
+		this.objectMapper = new ObjectMapper();
     }
 
+    
+    public void validateBusiness(BookRequest req, Long bookId) {
+
+        if (req.getAvailableCopies() > req.getTotalCopies()) {
+            throw new RuntimeException("availableCopies > totalCopies");
+        }
+
+        if (req.getTotalCopies() <= 0) {
+            throw new RuntimeException("totalCopies doit être > 0");
+        }
+
+        // ISBN unique (gestion update)
+        repository.findByIsbn(req.getIsbn()).ifPresent(b -> {
+            if (bookId == null || !b.getId().equals(bookId)) {
+                throw new RuntimeException("ISBN déjà existant");
+            }
+        });
+    }
+    
+    
+    
+    
+    
+    public Book create(BookRequest req, MultipartFile file) throws IOException {
+
+        // ✅ validation métier
+        validateBusiness(req, null);
+
+        // 🖼️ upload image
+        String imageUrl = saveImage(file);
+        req.setCoverUrl(imageUrl);
+        // 🧠 mapping DTO → entity
+        // Book book = bookMapper.toEntity(req);
+        
+     // 🧠 mapping DTO → Entity avec ObjectMapper
+        Book book = objectMapper.convertValue(req, Book.class);
+
+        return repository.save(book);
+    }
+    
+    
+    private String saveImage(MultipartFile file) throws IOException {
+
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("Image obligatoire");
+        }
+
+        // 🔒 validation type fichier
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("Fichier doit être une image");
+        }
+
+        String folder = "uploads/";
+        String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+        Path path = Paths.get(folder + filename);
+
+        Files.createDirectories(path.getParent());
+        Files.write(path, file.getBytes());
+
+        // ✅ URL accessible
+        return "uploads/" + filename;
+    }
+    
+    
+    
+    
     // 📚 ALL BOOKS
     public Page<Book> getAll(Pageable pageable) {
         return repository.findAll(pageable);

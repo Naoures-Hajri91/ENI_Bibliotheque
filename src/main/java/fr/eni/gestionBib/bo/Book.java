@@ -21,17 +21,17 @@ public class Book implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Titre obligatoire")
     @Size(min = 2, max = 255)
     @Column(nullable = false, length = 255)
     private String title;
 
-    @NotBlank
+    @NotBlank(message = "Auteur obligatoire")
     @Size(min = 2, max = 255)
     @Column(nullable = false, length = 255)
     private String author;
 
-    @NotBlank
+    @NotBlank(message = "ISBN obligatoire")
     @Size(min = 10, max = 20)
     @Column(nullable = false, unique = true, length = 20)
     private String isbn;
@@ -46,12 +46,12 @@ public class Book implements Serializable {
     private String coverUrl;
 
     @NotNull
-    @Min(0)
+    @Min(value = 0, message = "totalCopies >= 0")
     @Column(nullable = false)
     private Integer totalCopies;
 
     @NotNull
-    @Min(0)
+    @Min(value = 0, message = "availableCopies >= 0")
     @Column(nullable = false)
     private Integer availableCopies;
 
@@ -59,7 +59,7 @@ public class Book implements Serializable {
     @Max(5)
     private float avgRating;
     
-   private Boolean available;
+  
 
 
    /* @PastOrPresent
