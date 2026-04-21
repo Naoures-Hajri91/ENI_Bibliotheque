@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.eni.gestionBib.bll.BookService;
 import fr.eni.gestionBib.bo.Book;
-
+import fr.eni.gestionBib.bo.enumeration.Category;
 import fr.eni.gestionBib.web.dto.BookRequest;
 import jakarta.validation.Valid;
 
@@ -60,6 +60,16 @@ public class BookController {
       //  Long bookId = Long.parseLong(id);
 
         return service.getById(id);
+    }
+    
+ // 📌 GET books by category + pagination
+    @GetMapping("/by-category")
+    public Page<Book> getByCategory(
+            @RequestParam("category") Category category,
+            @RequestParam(defaultValue = "0", name = "page") Integer page,
+            @RequestParam(defaultValue = "20",name = "size") Integer size
+    ) {     Pageable pageable = PageRequest.of(page, size);
+        return service.findBookByCategory(category, pageable);
     }
     
     

@@ -4,15 +4,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.support.Repositories;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.eni.gestionBib.bo.Book;
+import fr.eni.gestionBib.bo.enumeration.Category;
 import fr.eni.gestionBib.dal.BookRepository;
 
 import fr.eni.gestionBib.web.dto.BookRequest;
@@ -132,6 +137,14 @@ return repository.findAll(pageable);
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book not found"));
     }
+    
+    // 📌 BY Categorie
+   public Page<Book> findBookByCategory(Category category,Pageable pageable){
+ 	   Page<Book> books = repository.findByCategory(category, pageable);
+ 		return books;
+ 	}
+    
+   
 
     // ➕ CREATE
     public Book create(Book book) {
@@ -151,8 +164,14 @@ return repository.findAll(pageable);
         return repository.save(b);
     }
 
-    // ❌ DELETE
-    public void delete(Long id) {
-        repository.deleteById(id);
-    }
+  
+    
+    
+ // ❌ DELETE
+   
+	public void delete(Long isbn) {
+		if (repository.findById(isbn).get()==null)
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book Not Found");
+		repository.deleteById(isbn);
+	}
 }

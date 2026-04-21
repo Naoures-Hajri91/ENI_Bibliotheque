@@ -8,6 +8,8 @@ import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
 
+import fr.eni.gestionBib.bo.enumeration.Category;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,9 +42,7 @@ public class Book implements Serializable {
     @Column(length = 2000)
     private String description;
 
-    @Size(max = 100)
-    private String category;
-
+    
     private String coverUrl;
 
     @NotNull
@@ -59,7 +59,8 @@ public class Book implements Serializable {
     @Max(5)
     private float avgRating;
     
-  
+    @Enumerated(EnumType.STRING)
+	private Category category;
 
 
    /* @PastOrPresent

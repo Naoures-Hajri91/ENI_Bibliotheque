@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import fr.eni.gestionBib.bo.Book;
+import fr.eni.gestionBib.bo.enumeration.Category;
 
 	 public interface BookRepository extends JpaRepository<Book, Long> {
 
@@ -20,7 +21,7 @@ import fr.eni.gestionBib.bo.Book;
 	     Page<Book> findByIsbnContainingIgnoreCase(String isbn, Pageable pageable);
 
 	     // 📚 filtre catégorie
-	     Page<Book> findByCategory(String category, Pageable pageable);
+	     Page<Book> findByCategory(Category category, Pageable pageable);
 
 	     // 📦 disponibilité
 	     //  Page<Book> findByAvailable(boolean available, Pageable pageable);
