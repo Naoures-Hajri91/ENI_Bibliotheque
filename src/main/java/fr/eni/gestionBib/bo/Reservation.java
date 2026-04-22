@@ -15,7 +15,7 @@ public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
     private LocalDateTime reservationDate;
@@ -27,10 +27,19 @@ public class Reservation {
     @Column(nullable = false, length = 20)
     private ReservationStatus status;
 
-    /* @ManyToOne
+     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserInfo user;
 
-    /*@ManyToOne
-    private Book book;*/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
+    
+    
+    
+    // ⭐ GOOD PRACTICE : auto set date avant persist
+    @PrePersist
+    public void prePersist() {
+        this.reservationDate = LocalDateTime.now();
+    }
 }
