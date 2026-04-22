@@ -34,12 +34,14 @@ public class EniSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+            .cors(cors -> {}) // ✅ FIX ICI
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session ->
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/books/**").permitAll()
                     .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)
