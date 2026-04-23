@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import fr.eni.gestionBib.bo.enumeration.ReservationStatus;
 
 @Data
@@ -15,9 +17,10 @@ public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime reservationDate;
 
     @Column(nullable = false)
@@ -27,10 +30,19 @@ public class Reservation {
     @Column(nullable = false, length = 20)
     private ReservationStatus status;
 
-    /* @ManyToOne
+     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserInfo user;
 
-    /*@ManyToOne
-    private Book book;*/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
+    
+    
+    
+    // ⭐ GOOD PRACTICE : auto set date avant persist
+    @PrePersist
+    public void prePersist() {
+        this.reservationDate = LocalDateTime.now();
+    }
 }
