@@ -26,6 +26,11 @@ public class ReservationService {
 		this.reservationRepository = reservationRepository;
     	
     }
+    public Reservation createReservationByEmailUser(Long bookId , String email) {
+    	UserInfo user = userRepository.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("User introuvable"));
+    	return createReservation(bookId, user.getId());
+    }
 
 	@Transactional
 	public Reservation createReservation(Long bookId , Long userId) {
