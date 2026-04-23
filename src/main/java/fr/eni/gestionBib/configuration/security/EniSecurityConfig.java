@@ -42,6 +42,8 @@ public class EniSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/books/**").permitAll()
+                    .requestMatchers("/uploads/**").permitAll()
+                    .requestMatchers("/api/loans/**").authenticated()
                     .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)

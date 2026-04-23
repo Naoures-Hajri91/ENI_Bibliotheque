@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import fr.eni.gestionBib.bo.enumeration.LoanStatus;
 
 @Entity
@@ -17,22 +19,25 @@ public class Loan {
     private Integer id;
 
     @Column(nullable = false)
-    private LocalDateTime loanDate;
+    private LocalDateTime loanDate; //date d’emprunt
 
     @Column(nullable = false)
-    private LocalDateTime dueDate;
+    private LocalDateTime dueDate;//date limite
 
     @Column
-    private LocalDateTime returnDate;
+    private LocalDateTime returnDate;//date réelle de retour
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private LoanStatus status;
 
-    /*@ManyToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"loans"})
     private UserInfo user;
 
     @ManyToOne
-    private Book book;*/
+    @JoinColumn(name = "book_id", nullable = false)
+    @JsonIgnoreProperties({"loans"})
+    private Book book;
 }
