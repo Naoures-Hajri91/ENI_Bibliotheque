@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import fr.eni.gestionBib.bo.enumeration.ReservationStatus;
 
 @Data
@@ -18,6 +20,7 @@ public class Reservation {
     private Long id;
 
     @Column(nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime reservationDate;
 
     @Column(nullable = false)
