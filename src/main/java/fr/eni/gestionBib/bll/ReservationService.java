@@ -1,6 +1,7 @@
 package fr.eni.gestionBib.bll;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -54,5 +55,11 @@ public class ReservationService {
 	    Reservation reservation = new Reservation(null, LocalDateTime.now(), rank, ReservationStatus.PENDING, user, book);
 
 	    return reservationRepository.save(reservation);
+	}
+	public List<Reservation>  getReservationByEmailUser(String email) {
+		// TODO Auto-generated method stub
+		UserInfo user = userRepository.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("User introuvable"));
+		return reservationRepository.findByUser(user);
 	}
 }
