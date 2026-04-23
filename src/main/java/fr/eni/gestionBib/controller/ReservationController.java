@@ -31,10 +31,10 @@ public class ReservationController {
 	 @GetMapping("/my")
 		public List<Reservation> mesreservations(Authentication authentication) {
 
-		    String email = (String) authentication.getPrincipal();
+		 UserInfo userinfo = (UserInfo) authentication.getPrincipal();
 		    
 		 
-		    return reservationService.getReservationByEmailUser( email);
+		    return reservationService.getReservationByEmailUser( userinfo.getEmail());
 		}
 	 
 	   /*  @PostMapping
@@ -46,11 +46,11 @@ public class ReservationController {
 		public Reservation reserve(@PathVariable(name="bookId") Long bookId,
 		                           Authentication authentication) {
 
-		    String email = (String) authentication.getPrincipal();
+		 UserInfo userinfo = (UserInfo) authentication.getPrincipal();
 		    
 		 
 
-		    return reservationService.createReservationByEmailUser(bookId, email);
+		    return reservationService.createReservationByEmailUser(bookId, userinfo.getEmail());
 		}
 		
 	}
